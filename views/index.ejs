@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inventario de productos</title>
+  <!-- Hoja de estilos servida desde /public por express.static -->
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Inventario de productos</h1>
+
+    <div class="acciones">
+      <!-- Enlace al formulario de alta -->
+      <a class="btn btn-primary" href="/productos/nuevo">+ Nuevo producto</a>
+
+      <!-- Búsqueda: envía ?busqueda=texto por GET a /productos -->
+      <form class="buscador" method="GET" action="/productos">
+        <input type="text" name="busqueda" placeholder="Buscar por nombre o id"
+               value="<%= busqueda %>">
+        <button type="submit">Buscar</button>
+      </form>
+    </div>
+
+    <!-- Si no hay productos, mostramos un mensaje en vez de la tabla vacía -->
+    <% if (productos.length === 0) { %>
+      <p class="vacio">No hay productos registrados.</p>
+    <% } else { %>
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Descripción</th>
+            <th>Cantidad</th>
+            <th>Precio</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Recorremos cada producto que mandó la ruta GET /productos -->
+          <% productos.forEach(p => { %>
+            <tr>
+              <td><%= p.id %></td>
+              <td><%= p.nombre %></td>
+              <td><%= p.descripcion %></td>
+              <td><%= p.cantidad %></td>
+              <!-- toFixed(2) para mostrar el precio con 2 decimales -->
+              <td>$<%= Number(p.precio).toFixed(2) %></td>
+              <td class="acciones-fila">
+                <a class="btn" href="/productos/<%= p.id %>/editar">Editar</a>
+
+                <!-- Eliminar va por POST (no por enlace) para no borrar sin querer -->
+                <form method="POST" action="/productos/<%= p.id %>/eliminar"
+                      onsubmit="return confirm('¿Eliminar este producto?');">
+                  <button type="submit" class="btn btn-danger">Eliminar</button>
+                </form>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    <% } %>
+  </div>
+</body>
+</html>

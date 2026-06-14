@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Editar producto</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Editar producto #<%= producto.id %></h1>
+
+    <!-- POST /productos/:id/actualizar -> el router hace el UPDATE -->
+    <form method="POST" action="/productos/<%= producto.id %>/actualizar" class="formulario">
+      <label>
+        Nombre
+        <!-- value precargado con el dato actual que mandó la ruta -->
+        <input type="text" name="nombre" value="<%= producto.nombre %>" required>
+      </label>
+
+      <label>
+        Descripción
+        <textarea name="descripcion" rows="3"><%= producto.descripcion %></textarea>
+      </label>
+
+      <label>
+        Cantidad (stock)
+        <input type="number" name="cantidad" min="0" value="<%= producto.cantidad %>" required>
+      </label>
+
+      <label>
+        Precio
+        <input type="number" name="precio" min="0" step="0.01" value="<%= producto.precio %>" required>
+      </label>
+
+      <div class="acciones">
+        <button type="submit" class="btn btn-primary">Actualizar</button>
+        <a class="btn" href="/productos">Cancelar</a>
+      </div>
+    </form>
+  </div>
+</body>
+</html>
