@@ -1,0 +1,45 @@
+# docker-compose SOLO PARA PRUEBA LOCAL.
+# Levanta la base de datos y la app juntas en tu computadora con un
+# solo comando, para que veas la app funcionando sin tu compañero.
+#
+#   docker compose up --build
+#
+# Luego abre en el navegador:  http://localhost:3000
+#
+# (En el proyecto real distribuido, la base de datos vive en la
+#  máquina de tu compañero y tu app se conecta por la IP de Tailscale.
+#  Este archivo es solo para que pruebes tú sola.)
+
+services:
+  # --- Base de datos de prueba (simula la de tu compañero) ---
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: inventario
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: secreto
+    volumes:
+      # Persiste los datos aunque reinicies el contenedor
+      - datos_db:/var/lib/postgresql/data
+      # init.sql se ejecuta solo la primera vez para crear la tabla y los ejemplos
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5432:5432"
+
+  # --- Tu aplicación de inventario ---
+  app:
+    build: .            # usa tu Dockerfile
+    environment:
+      DB_HOST: db       # "db" es el nombre del servicio de arriba, no una IP
+      DB_PORT: 5432
+      DB_NAME: inventario
+      DB_USER: admin
+      DB_PASSWORD: secreto
+      PORT: 3000
+    ports:
+      - "3000:3000"     # tu navegador -> contenedor
+    depends_on:
+      - db              # espera a que la base de datos arranque
+
+volumes:
+  datos_db:

@@ -1,0 +1,12 @@
+# Dependencias (se reinstalan con npm install)
+node_modules/
+
+# Variables de entorno con credenciales (NO subir)
+.env
+
+# Logs
+*.log
+npm-debug.log*
+
+# Sistema
+.DS_Store
