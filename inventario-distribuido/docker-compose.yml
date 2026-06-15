@@ -1,0 +1,74 @@
+# ============================================================================
+#  docker-compose.yml  —  Levanta los DOS contenedores del Estudiante 2:
+#    1) db        -> base de datos PostgreSQL (con volumen + init.sql)
+#    2) reportes  -> servicio web que genera los reportes
+#  Ambos viven en una red interna personalizada llamada "red-inventario".
+#
+#  Para correr todo:   docker compose up --build
+#  Para apagar:        docker compose down
+#  Para borrar datos:  docker compose down -v   (elimina el volumen)
+# ============================================================================
+
+services:
+
+  # --------------------------------------------------------------------------
+  #  CONTENEDOR A — Base de datos PostgreSQL
+  # --------------------------------------------------------------------------
+  db:
+    image: postgres:16                 # imagen oficial de Postgres
+    container_name: inventario-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: admin             # usuario de la base
+      POSTGRES_PASSWORD: secreto       # contrasena
+      POSTGRES_DB: inventario          # nombre de la base que se crea
+    ports:
+      # Publica el puerto 5432 al HOST. Esto es lo que hace que la app del
+      # Estudiante 1 pueda conectarse por la IP de Tailscale de tu maquina.
+      - "5432:5432"
+    volumes:
+      # Volumen con nombre -> los datos PERSISTEN aunque reinicies el contenedor.
+      - inventario-data:/var/lib/postgresql/data
+      # Monta el script de init. Postgres lo corre solo en el primer arranque.
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    networks:
+      - red-inventario
+    healthcheck:
+      # Avisa cuando la base ya esta lista para aceptar conexiones.
+      test: ["CMD-SHELL", "pg_isready -U admin -d inventario"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # --------------------------------------------------------------------------
+  #  CONTENEDOR B — Servicio de reportes
+  # --------------------------------------------------------------------------
+  reportes:
+    build: ./reportes                  # se construye desde reportes/Dockerfile
+    container_name: inventario-reportes
+    restart: unless-stopped
+    environment:
+      # OJO: DB_HOST = "db" (el NOMBRE DEL SERVICIO), no una IP.
+      # Como ambos estan en la misma red de Docker, "db" se resuelve solo.
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: inventario
+      DB_USER: admin
+      DB_PASSWORD: secreto
+      PORT: 4000
+    ports:
+      - "4000:4000"                    # reportes web en http://localhost:4000
+    depends_on:
+      db:
+        condition: service_healthy     # espera a que la base este lista
+    networks:
+      - red-inventario
+
+# Red interna personalizada que conecta los dos contenedores.
+networks:
+  red-inventario:
+    driver: bridge
+
+# Volumen con nombre para la persistencia de la base.
+volumes:
+  inventario-data:

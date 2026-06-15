@@ -1,0 +1,15 @@
+{
+  "name": "reportes-inventario",
+  "version": "1.0.0",
+  "description": "Servicio de reportes del inventario (Estudiante 2, Contenedor B)",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "license": "ISC",
+  "dependencies": {
+    "ejs": "^3.1.10",
+    "express": "^4.21.2",
+    "pg": "^8.13.1"
+  }
+}
