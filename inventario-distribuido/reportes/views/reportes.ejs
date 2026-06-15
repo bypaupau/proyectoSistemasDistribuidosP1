@@ -7,13 +7,27 @@
   <link rel="stylesheet" href="/style.css">
 </head>
 <body>
-  <div class="container">
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">
+        <span class="brand-mark">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><rect x="7" y="10" width="3" height="8" rx="1"/><rect x="12" y="6" width="3" height="12" rx="1"/><rect x="17" y="13" width="3" height="5" rx="1"/></svg>
+        </span>
+        <span class="brand-text">
+          <strong>Inventario</strong>
+          <span>Panel de reportes</span>
+        </span>
+      </div>
+      <span class="topbar-tag">Reportes</span>
+    </div>
+  </header>
 
-    <header class="encabezado">
-      <h1>Sistema de Reportes de Inventario</h1>
-      <p class="sub">Estudiante 2 · Contenedor B · conectado a la base
-        <code>inventario</code> por la red interna de Docker.</p>
-    </header>
+  <main class="container">
+
+    <div class="page-head">
+      <h1>Reportes de inventario</h1>
+      <p class="page-sub">Resumen del estado actual del inventario.</p>
+    </div>
 
     <!-- ============ RESUMEN GENERAL (3 tarjetas) ============ -->
     <section class="tarjetas">
@@ -86,10 +100,6 @@
       <% } %>
     </section>
 
-    <footer class="pie">
-      Endpoints JSON: <code>/api/stock-bajo</code> · <code>/api/top-valor</code> · <code>/api/resumen</code>
-    </footer>
-
-  </div>
+  </main>
 </body>
 </html>

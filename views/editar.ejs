@@ -7,9 +7,28 @@
   <link rel="stylesheet" href="/style.css">
 </head>
 <body>
-  <div class="container">
-    <h1>Editar producto #<%= producto.id %></h1>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">
+        <span class="brand-mark">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+        </span>
+        <span class="brand-text">
+          <strong>Inventario</strong>
+          <span>Gestión de productos</span>
+        </span>
+      </div>
+      <span class="topbar-tag">Panel de gestión</span>
+    </div>
+  </header>
 
+  <main class="container">
+    <div class="page-head">
+      <h1>Editar producto #<%= producto.id %></h1>
+      <p class="page-sub">Actualiza los datos o el stock del producto.</p>
+    </div>
+
+    <section class="panel">
     <!-- POST /productos/:id/actualizar -> el router hace el UPDATE -->
     <form method="POST" action="/productos/<%= producto.id %>/actualizar" class="formulario">
       <label>
@@ -38,6 +57,7 @@
         <a class="btn" href="/productos">Cancelar</a>
       </div>
     </form>
-  </div>
+    </section>
+  </main>
 </body>
 </html>

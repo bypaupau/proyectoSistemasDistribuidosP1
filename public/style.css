@@ -1,73 +1,234 @@
-/* Estilos simples para la app de inventario */
+/* ============================================================
+   Tema corporativo · Inventario
+   Paleta sobria, jerarquía clara, componentes reutilizables.
+   ============================================================ */
 
-* { box-sizing: border-box; }
+:root {
+  --bg:        #eef2f6;
+  --surface:   #ffffff;
+  --ink:       #0f1f35;
+  --muted:     #5b6b80;
+  --border:    #e3e8ef;
+  --primary:   #1d4ed8;
+  --primary-d: #1e40af;
+  --navy:      #0f2942;
+  --navy-2:    #15375a;
+  --danger:    #dc2626;
+  --danger-d:  #b91c1c;
+  --ok:        #0f766e;
+  --shadow:    0 1px 2px rgba(15,31,53,.04), 0 2px 6px rgba(15,31,53,.06);
+  --radius:    12px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
-  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  background: #f4f6f8;
-  color: #1f2933;
-  margin: 0;
-  padding: 2rem 1rem;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+               "Helvetica Neue", Arial, sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
 }
 
-.container {
-  max-width: 900px;
+/* ---------- Barra superior de marca ---------- */
+.topbar {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+.topbar-inner {
+  max-width: 1040px;
   margin: 0 auto;
-  background: #fff;
-  padding: 1.5rem 2rem;
-  border-radius: 10px;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+  padding: 11px 22px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.brand { display: flex; align-items: center; gap: 11px; }
+.brand-mark {
+  width: 32px; height: 32px;
+  border-radius: 8px;
+  background: var(--navy);
+  border: 1px solid var(--navy);
+  display: flex; align-items: center; justify-content: center;
+  color: #fff;
+}
+.brand-mark svg { width: 17px; height: 17px; }
+.brand-text { display: flex; flex-direction: column; line-height: 1.2; }
+.brand-text strong { color: var(--ink); font-size: .96rem; letter-spacing: .2px; }
+.brand-text span { color: var(--muted); font-size: .74rem; }
+.topbar-tag {
+  color: var(--muted);
+  font-size: .75rem;
+  border: 1px solid var(--border);
+  padding: 4px 11px;
+  border-radius: 999px;
+  white-space: nowrap;
 }
 
-h1 { margin-top: 0; }
+/* ---------- Contenedor / encabezado de página ---------- */
+.container { max-width: 1040px; margin: 0 auto; padding: 26px 22px 48px; }
 
-/* Barra de acciones (botón nuevo + buscador) */
-.acciones {
+.page-head { margin-bottom: 20px; }
+.page-head h1 { font-size: 1.5rem; font-weight: 700; letter-spacing: -.2px; }
+.page-sub { color: var(--muted); font-size: .9rem; margin-top: 3px; }
+
+/* ---------- Tarjetas KPI ---------- */
+.tarjetas {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 18px;
+}
+.tarjeta {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  position: relative;
+  overflow: hidden;
+}
+.tarjeta::before {
+  content: "";
+  position: absolute; left: 0; top: 0; bottom: 0;
+  width: 4px; background: var(--primary);
+}
+.tarjeta-num { font-size: 1.75rem; font-weight: 700; color: var(--ink); }
+.tarjeta-lbl {
+  font-size: .72rem; color: var(--muted);
+  text-transform: uppercase; letter-spacing: .05em; font-weight: 600;
+}
+.tarjeta-valor { background: linear-gradient(135deg, var(--navy), var(--navy-2)); border-color: var(--navy); }
+.tarjeta-valor::before { background: var(--primary); }
+.tarjeta-valor .tarjeta-num { color: #fff; }
+.tarjeta-valor .tarjeta-lbl { color: #9db4cc; }
+
+/* ---------- Barra de herramientas (botón nuevo + buscador) ---------- */
+.toolbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 1rem;
-  margin-bottom: 1.5rem;
+  gap: 12px;
   flex-wrap: wrap;
+  margin-bottom: 18px;
 }
-
-.buscador { display: flex; gap: 0.5rem; }
-.buscador input { padding: 0.5rem; border: 1px solid #cbd2d9; border-radius: 6px; }
-
-/* Tabla de productos */
-table { width: 100%; border-collapse: collapse; }
-th, td { padding: 0.6rem 0.75rem; text-align: left; border-bottom: 1px solid #e4e7eb; }
-th { background: #f0f4f8; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.03em; }
-tr:hover td { background: #fafbfc; }
-
-.acciones-fila { display: flex; gap: 0.5rem; }
-.vacio { color: #7b8794; font-style: italic; }
-
-/* Botones */
-.btn {
-  display: inline-block;
-  padding: 0.45rem 0.9rem;
-  border: 1px solid #cbd2d9;
-  border-radius: 6px;
+.buscador { display: flex; gap: 8px; }
+.buscador input {
+  padding: 9px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font: inherit;
   background: #fff;
-  color: #1f2933;
-  text-decoration: none;
-  font-size: 0.9rem;
-  cursor: pointer;
+  min-width: 220px;
 }
-.btn:hover { background: #f0f4f8; }
-.btn-primary { background: #2563eb; border-color: #2563eb; color: #fff; }
-.btn-primary:hover { background: #1d4ed8; }
-.btn-danger { background: #ef4444; border-color: #ef4444; color: #fff; }
-.btn-danger:hover { background: #dc2626; }
+.buscador input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(29,78,216,.12);
+}
 
-/* Formularios de alta/edición */
-.formulario { display: flex; flex-direction: column; gap: 1rem; max-width: 480px; }
-.formulario label { display: flex; flex-direction: column; gap: 0.3rem; font-weight: 600; }
+/* ---------- Acciones (filas de botones) ---------- */
+.acciones { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 22px; }
+.acciones-fila { display: flex; gap: 8px; }
+
+/* ---------- Botones ---------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 16px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: #fff;
+  color: var(--ink);
+  text-decoration: none;
+  font: inherit;
+  font-size: .88rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background .12s ease, border-color .12s ease, box-shadow .12s ease;
+}
+.btn:hover { background: #f5f7fa; border-color: #cbd5e1; }
+.btn-primary { background: var(--primary); border-color: var(--primary); color: #fff; }
+.btn-primary:hover { background: var(--primary-d); border-color: var(--primary-d); }
+.btn-danger { background: #fff; border-color: #f1c9c9; color: var(--danger); }
+.btn-danger:hover { background: var(--danger); border-color: var(--danger); color: #fff; }
+.btn-ghost { background: #fff; color: var(--primary); border: 1px solid #cdd7e6; }
+.btn-ghost:hover { background: #f4f7fc; }
+
+/* ---------- Paneles (tarjetas blancas con contenido) ---------- */
+.panel, .bloque {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 4px 20px;
+  margin-bottom: 20px;
+}
+.bloque { padding: 18px 20px; }
+.bloque h2 {
+  font-size: 1.02rem; font-weight: 700; margin-bottom: 14px;
+  display: flex; align-items: baseline; gap: 8px;
+}
+.bloque h2 small { color: var(--muted); font-weight: 400; font-size: .8rem; }
+
+/* ---------- Tablas ---------- */
+table { width: 100%; border-collapse: collapse; font-size: .92rem; }
+th, td { text-align: left; padding: 12px 12px; border-bottom: 1px solid #eef1f5; }
+th {
+  color: var(--muted); font-weight: 600; font-size: .72rem;
+  text-transform: uppercase; letter-spacing: .04em;
+  background: #f8fafc;
+}
+tbody tr:last-child td { border-bottom: none; }
+tbody tr { transition: background .1s ease; }
+tbody tr:hover td { background: #f8fafc; }
+.num { text-align: right; }
+.valor { color: var(--ok); }
+.rank { font-weight: 700; color: var(--primary); }
+
+/* Badge de alerta de bajo stock */
+.badge-alerta {
+  display: inline-block;
+  background: #fef2f2;
+  color: #c0392b;
+  font-weight: 700;
+  padding: 2px 10px;
+  border-radius: 999px;
+  min-width: 30px;
+  text-align: center;
+  border: 1px solid #f6d6d6;
+}
+
+/* ---------- Formularios ---------- */
+.formulario { display: flex; flex-direction: column; gap: 16px; max-width: 480px; padding: 20px 0; }
+.formulario label { display: flex; flex-direction: column; gap: 6px; font-weight: 600; font-size: .9rem; }
 .formulario input, .formulario textarea {
-  padding: 0.55rem;
-  border: 1px solid #cbd2d9;
-  border-radius: 6px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
   font: inherit;
   font-weight: 400;
+  background: #fff;
+}
+.formulario input:focus, .formulario textarea:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(29,78,216,.12);
+}
+
+/* ---------- Misc ---------- */
+.vacio { color: var(--muted); font-style: italic; padding: 8px 0; }
+
+/* ---------- Responsivo ---------- */
+@media (max-width: 680px) {
+  .tarjetas { grid-template-columns: 1fr; }
+  .toolbar { align-items: stretch; }
+  .buscador { flex: 1; }
+  .buscador input { flex: 1; min-width: 0; }
 }
