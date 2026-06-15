@@ -208,7 +208,7 @@ tbody tr:hover td { background: #f8fafc; }
 /* ---------- Formularios ---------- */
 .formulario { display: flex; flex-direction: column; gap: 16px; max-width: 480px; padding: 20px 0; }
 .formulario label { display: flex; flex-direction: column; gap: 6px; font-weight: 600; font-size: .9rem; }
-.formulario input, .formulario textarea {
+.formulario input, .formulario textarea, .formulario select {
   padding: 10px 12px;
   border: 1px solid var(--border);
   border-radius: 8px;
@@ -216,7 +216,7 @@ tbody tr:hover td { background: #f8fafc; }
   font-weight: 400;
   background: #fff;
 }
-.formulario input:focus, .formulario textarea:focus {
+.formulario input:focus, .formulario textarea:focus, .formulario select:focus {
   outline: none;
   border-color: var(--primary);
   box-shadow: 0 0 0 3px rgba(29,78,216,.12);
@@ -224,6 +224,12 @@ tbody tr:hover td { background: #f8fafc; }
 
 /* ---------- Misc ---------- */
 .vacio { color: var(--muted); font-style: italic; padding: 8px 0; }
+.grafico-wrap { position: relative; height: 300px; width: 100%; }
+
+/* Rejilla de 2 columnas para paneles de gráficos (estilo dashboard) */
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.grid-2 .bloque { margin-bottom: 20px; }
+@media (max-width: 760px) { .grid-2 { grid-template-columns: 1fr; } }
 
 /* ---------- Responsivo ---------- */
 @media (max-width: 680px) {

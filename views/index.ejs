@@ -52,6 +52,7 @@
             <th>ID</th>
             <th>Nombre</th>
             <th>Descripción</th>
+            <th>Categoría</th>
             <th>Cantidad</th>
             <th>Precio</th>
             <th>Acciones</th>
@@ -64,6 +65,7 @@
               <td><%= p.id %></td>
               <td><%= p.nombre %></td>
               <td><%= p.descripcion %></td>
+              <td><%= p.categoria %></td>
               <td><%= p.cantidad %></td>
               <!-- toFixed(2) para mostrar el precio con 2 decimales -->
               <td>$<%= Number(p.precio).toFixed(2) %></td>

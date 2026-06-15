@@ -43,6 +43,19 @@
       </label>
 
       <label>
+        Categoría
+        <% const cats = ['Computadoras','Monitores','Perifericos','Audio','Almacenamiento','Componentes','Accesorios','General']; %>
+        <select name="categoria">
+          <% cats.forEach(c => { %>
+            <option <%= producto.categoria === c ? 'selected' : '' %>><%= c %></option>
+          <% }) %>
+          <% if (producto.categoria && !cats.includes(producto.categoria)) { %>
+            <option selected><%= producto.categoria %></option>
+          <% } %>
+        </select>
+      </label>
+
+      <label>
         Cantidad (stock)
         <input type="number" name="cantidad" min="0" value="<%= producto.cantidad %>" required>
       </label>

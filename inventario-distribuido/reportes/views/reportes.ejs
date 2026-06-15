@@ -100,6 +100,113 @@
       <% } %>
     </section>
 
+    <!-- ============ EXTRA: GRAFICOS (valor por producto + por categoria) ============ -->
+    <div class="grid-2">
+      <section class="bloque">
+        <h2>Valor por producto <small>(adicional · cantidad &times; precio)</small></h2>
+        <% if (inventario.length === 0) { %>
+          <p class="vacio">No hay productos registrados.</p>
+        <% } else { %>
+          <div class="grafico-wrap">
+            <canvas id="graficoValor"></canvas>
+          </div>
+        <% } %>
+      </section>
+
+      <section class="bloque">
+        <h2>Distribucion por categoria <small>(adicional · por valor)</small></h2>
+        <% if (categorias.length === 0) { %>
+          <p class="vacio">No hay productos registrados.</p>
+        <% } else { %>
+          <div class="grafico-wrap">
+            <canvas id="graficoCategoria"></canvas>
+          </div>
+        <% } %>
+      </section>
+    </div>
+
+    <!-- ============ EXTRA: INVENTARIO COMPLETO ============ -->
+    <section class="bloque">
+      <h2>Inventario completo <small>(adicional · <%= inventario.length %> producto<%= inventario.length === 1 ? '' : 's' %>)</small></h2>
+      <% if (inventario.length === 0) { %>
+        <p class="vacio">No hay productos registrados.</p>
+      <% } else { %>
+        <table>
+          <thead>
+            <tr><th>ID</th><th>Nombre</th><th>Descripcion</th><th>Categoria</th><th class="num">Stock</th><th class="num">Precio</th><th class="num">Valor total</th></tr>
+          </thead>
+          <tbody>
+            <% inventario.forEach(p => { %>
+              <tr>
+                <td><%= p.id %></td>
+                <td><%= p.nombre %></td>
+                <td><%= p.descripcion %></td>
+                <td><%= p.categoria %></td>
+                <td class="num"><%= p.cantidad %></td>
+                <td class="num">$<%= Number(p.precio).toFixed(2) %></td>
+                <td class="num valor"><strong>$<%= Number(p.valor_total).toFixed(2) %></strong></td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      <% } %>
+    </section>
+
   </main>
+
+  <!-- Chart.js para el grafico de barras (se carga desde CDN) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+  <script>
+    const datosInventario = <%- JSON.stringify(inventario.map(p => ({ nombre: p.nombre, valor: Number(p.valor_total) }))) %>;
+    const canvas = document.getElementById('graficoValor');
+    if (canvas && datosInventario.length && window.Chart) {
+      new Chart(canvas, {
+        type: 'bar',
+        data: {
+          labels: datosInventario.map(d => d.nombre),
+          datasets: [{
+            label: 'Valor en inventario ($)',
+            data: datosInventario.map(d => d.valor),
+            backgroundColor: '#1d4ed8',
+            borderRadius: 6,
+            maxBarThickness: 46
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            y: { beginAtZero: true, ticks: { callback: v => '$' + v } },
+            x: { ticks: { maxRotation: 45, minRotation: 0, autoSkip: false } }
+          }
+        }
+      });
+    }
+
+    // Grafico de dona: distribucion del valor del inventario por categoria.
+    const datosCategoria = <%- JSON.stringify(categorias.map(c => ({ categoria: c.categoria, valor: Number(c.valor_total) }))) %>;
+    const canvasCat = document.getElementById('graficoCategoria');
+    if (canvasCat && datosCategoria.length && window.Chart) {
+      const colores = ['#1d4ed8','#0e7490','#0f766e','#7c3aed','#db2777','#ea580c','#ca8a04','#475569','#16a34a'];
+      new Chart(canvasCat, {
+        type: 'doughnut',
+        data: {
+          labels: datosCategoria.map(d => d.categoria),
+          datasets: [{
+            data: datosCategoria.map(d => d.valor),
+            backgroundColor: datosCategoria.map((d, i) => colores[i % colores.length]),
+            borderWidth: 2,
+            borderColor: '#fff'
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { position: 'right', labels: { boxWidth: 12, font: { size: 11 } } } }
+        }
+      });
+    }
+  </script>
 </body>
 </html>

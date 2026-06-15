@@ -43,6 +43,15 @@
       </label>
 
       <label>
+        Categoría
+        <select name="categoria">
+          <% ['Computadoras','Monitores','Perifericos','Audio','Almacenamiento','Componentes','Accesorios','General'].forEach(c => { %>
+            <option <%= c === 'General' ? 'selected' : '' %>><%= c %></option>
+          <% }) %>
+        </select>
+      </label>
+
+      <label>
         Cantidad
         <!-- min="0" evita stock negativo -->
         <input type="number" name="cantidad" min="0" value="0" required>

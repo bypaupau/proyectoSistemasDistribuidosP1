@@ -68,16 +68,16 @@ router.get('/:id', async (req, res) => {
 // -----------------------------------------------------------------------------
 router.post('/', async (req, res) => {
   try {
-    const { nombre, descripcion, cantidad, precio } = req.body;
+    const { nombre, descripcion, cantidad, precio, categoria } = req.body;
 
     if (!nombre || cantidad === undefined || precio === undefined) {
       return res.status(400).send('Faltan campos obligatorios (nombre, cantidad, precio).');
     }
 
     await pool.query(
-      `INSERT INTO productos (nombre, descripcion, cantidad, precio)
-       VALUES ($1, $2, $3, $4)`,
-      [nombre, descripcion || '', parseInt(cantidad, 10), parseFloat(precio)]
+      `INSERT INTO productos (nombre, descripcion, cantidad, precio, categoria)
+       VALUES ($1, $2, $3, $4, $5)`,
+      [nombre, descripcion || '', parseInt(cantidad, 10), parseFloat(precio), categoria || 'General']
     );
 
     res.redirect('/productos');
@@ -112,13 +112,13 @@ router.get('/:id/editar', async (req, res) => {
 router.post('/:id/actualizar', async (req, res) => {
   try {
     const { id } = req.params;
-    const { nombre, descripcion, cantidad, precio } = req.body;
+    const { nombre, descripcion, cantidad, precio, categoria } = req.body;
 
     const resultado = await pool.query(
       `UPDATE productos
-       SET nombre = $1, descripcion = $2, cantidad = $3, precio = $4
-       WHERE id = $5`,
-      [nombre, descripcion || '', parseInt(cantidad, 10), parseFloat(precio), id]
+       SET nombre = $1, descripcion = $2, cantidad = $3, precio = $4, categoria = $5
+       WHERE id = $6`,
+      [nombre, descripcion || '', parseInt(cantidad, 10), parseFloat(precio), categoria || 'General', id]
     );
 
     if (resultado.rowCount === 0) {

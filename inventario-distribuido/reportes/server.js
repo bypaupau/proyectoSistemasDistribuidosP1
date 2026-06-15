@@ -71,17 +71,44 @@ function consultaResumen() {
   );
 }
 
-// Junta los 3 reportes en un solo objeto.
+// 4) Inventario completo: todos los productos con su valor total.
+function consultaInventario() {
+  return pool.query(
+    `SELECT id, nombre, descripcion, categoria, cantidad, precio,
+            (cantidad * precio) AS valor_total
+       FROM productos
+      ORDER BY id ASC`
+  );
+}
+
+// 5) Resumen por categoria: cuantos productos y cuanto valor hay en cada una.
+function consultaPorCategoria() {
+  return pool.query(
+    `SELECT categoria,
+            COUNT(*)::int                       AS productos,
+            COALESCE(SUM(cantidad), 0)::int     AS unidades,
+            COALESCE(SUM(cantidad * precio), 0)::numeric(12,2) AS valor_total
+       FROM productos
+      GROUP BY categoria
+      ORDER BY valor_total DESC`
+  );
+}
+
+// Junta todos los reportes en un solo objeto.
 async function obtenerReportes() {
-  const [stockBajo, topValor, resumen] = await Promise.all([
+  const [stockBajo, topValor, resumen, inventario, categorias] = await Promise.all([
     consultaStockBajo(),
     consultaTopValor(),
     consultaResumen(),
+    consultaInventario(),
+    consultaPorCategoria(),
   ]);
   return {
     stockBajo: stockBajo.rows,
     topValor: topValor.rows,
     resumen: resumen.rows[0],
+    inventario: inventario.rows,
+    categorias: categorias.rows,
   };
 }
 
@@ -121,6 +148,24 @@ app.get('/api/top-valor', async (req, res) => {
   }
 });
 
+app.get('/api/inventario', async (req, res) => {
+  try {
+    const r = await consultaInventario();
+    res.json(r.rows);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.get('/api/categorias', async (req, res) => {
+  try {
+    const r = await consultaPorCategoria();
+    res.json(r.rows);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 app.get('/api/resumen', async (req, res) => {
   try {
     const r = await consultaResumen();
@@ -136,18 +181,19 @@ app.get('/api/resumen', async (req, res) => {
 app.get('/export/csv', async (req, res) => {
   try {
     const r = await pool.query(
-      `SELECT id, nombre, descripcion, cantidad, precio,
+      `SELECT id, nombre, descripcion, categoria, cantidad, precio,
               (cantidad * precio) AS valor_total
          FROM productos
         ORDER BY valor_total DESC`
     );
 
-    const encabezado = 'id,nombre,descripcion,cantidad,precio,valor_total';
+    const encabezado = 'id,nombre,descripcion,categoria,cantidad,precio,valor_total';
     const filas = r.rows.map((p) => {
       // Encerramos texto entre comillas y escapamos comillas internas.
       const nombre = `"${String(p.nombre).replace(/"/g, '""')}"`;
       const desc = `"${String(p.descripcion || '').replace(/"/g, '""')}"`;
-      return [p.id, nombre, desc, p.cantidad, p.precio, p.valor_total].join(',');
+      const cat = `"${String(p.categoria || '').replace(/"/g, '""')}"`;
+      return [p.id, nombre, desc, cat, p.cantidad, p.precio, p.valor_total].join(',');
     });
     const csv = [encabezado, ...filas].join('\n');
 
